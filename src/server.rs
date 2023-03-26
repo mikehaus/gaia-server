@@ -1,6 +1,5 @@
 // External Deps
 use actix_web::{get, post, HttpResponse, Responder};
-use std::io;
 
 // Internal Deps
 
@@ -19,7 +18,7 @@ pub async fn echo(req_body: String) -> impl Responder {
 }
 
 // TODO: Implement completion endpoint once completions logic implemented
-#[post("/open-ai/completions")]
+#[post("/openai/completions")]
 pub async fn open_ai_completion() -> impl Responder {
     HttpResponse::Ok().body("This is a stubbed response")
 }
