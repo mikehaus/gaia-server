@@ -2,6 +2,11 @@
 use actix_web::{get, post, HttpResponse, Responder};
 
 // Internal Deps
+#[path = "./services/mod.rs"]
+pub mod services;
+
+#[path = "./client.rs"]
+mod client;
 
 // MARK: GET
 
@@ -20,7 +25,16 @@ pub async fn echo(req_body: String) -> impl Responder {
 // TODO: Implement completion endpoint once completions logic implemented
 #[post("/openai/completions")]
 pub async fn open_ai_completion() -> impl Responder {
-    HttpResponse::Ok().body("This is a stubbed response")
+    let client = client::client_builder();
+
+    let response = services::completion_handler::generate_completion(client).await;
+    match response {
+        Ok(text) => HttpResponse::Ok().body(text),
+        Err(err) => {
+            println!("{}", err);
+            HttpResponse::Ok().body("There was an error with the completions endpoint call")
+        }
+    }
 }
 
 // MARK: Manual Endpoints

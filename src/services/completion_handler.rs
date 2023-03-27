@@ -1,7 +1,7 @@
 // External Deps
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
-use std::format::Display;
+use std::fmt::Display;
 use std::io::{stdout, Write};
 
 // Internal Deps
@@ -15,21 +15,29 @@ const DEFAULT_COMPLETION_MODEL: &str = "text-davinci-003";
 const DEFAULT_COMPLETION_MAX_TOKENS: u32 = 100;
 const DEFAULT_COMPLETION_TEMPERATURE: f32 = 8.0;
 
-pub async fn generate_completion(client: Client) -> Result<String, ServiveError> {
+pub async fn generate_completion(client: Client) -> Result<String, ServiceError> {
     let test_prompt = "Generate dungeons and dragons PC druid names";
+    let test_model = "text-davinci-003";
+    let test_max_tokens = Some(0.8);
+    let test_temp = Some(100);
 
-    let payload = CompletionsPayload::new(&text_prompt);
+    let payload = CompletionsPayload::new(
+        &test_prompt,
+        &Some(String::from(test_model)),
+        test_temp,
+        test_max_tokens,
+    );
 
     dbg!(&payload);
 
     let response = client
         .post(format!("{}{}", OPEN_AI_URL, COMPLETIONS_ENDPOINT))
-        .json(payload)
+        .json(&payload)
         .send()
         .await
         .unwrap();
 
-    dbg(&response);
+    dbg!(&response);
 
     match response.status() {
         reqwest::StatusCode::OK => {
@@ -38,7 +46,7 @@ pub async fn generate_completion(client: Client) -> Result<String, ServiveError>
             response_body.choices.iter().for_each(|choice| {
                 result.push_str(&choice.text);
             });
-            Ok(result);
+            Ok(result)
         }
         _ => Err(ServiceError::new(
             "Error generating open_ai completions response",
@@ -67,7 +75,7 @@ impl CompletionsPayload {
             None => DEFAULT_COMPLETION_MODEL.to_string(),
         };
 
-        let max_tokesn = match tokens {
+        let max_tokens = match tokens {
             Some(t) => t,
             None => DEFAULT_COMPLETION_MAX_TOKENS,
         };
@@ -99,7 +107,7 @@ pub struct CompletionsResponse {
 pub struct CompletionChoices {
     text: String,
     index: u32,
-    logprobs: Option<CompletionLogProbs>,
+    logprobs: Option<CompletionsLogProbs>,
     finish_reason: String,
 }
 

@@ -6,8 +6,7 @@ use std::env;
 // Internal Deps
 
 pub fn client_builder() -> Client {
-    Client
-        .builder()
+    Client::builder()
         .default_headers(get_headers())
         .build()
         .unwrap()
