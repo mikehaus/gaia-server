@@ -7,6 +7,7 @@ use std::io::Result;
 // Internal Deps
 use server::{echo, hello, manual_hello, open_ai_completion};
 
+// TODO: use this: https://docs.rs/actix-cors/latest/actix_cors/
 #[actix_web::main]
 async fn main() -> Result<()> {
     HttpServer::new(|| {

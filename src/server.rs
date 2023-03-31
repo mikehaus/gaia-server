@@ -1,5 +1,5 @@
 // External Deps
-use actix_web::{get, post, HttpResponse, Responder};
+use actix_web::{get, http::header::ContentType, post, HttpResponse, Responder};
 
 // Internal Deps
 #[path = "./services/mod.rs"]
@@ -29,7 +29,10 @@ pub async fn open_ai_completion() -> impl Responder {
 
     let response = services::completion_handler::generate_completion(client).await;
     match response {
-        Ok(text) => HttpResponse::Ok().body(text),
+        Ok(text) => HttpResponse::Ok()
+            .content_type(ContentType::plaintext())
+            .insert_header(("X-Hdr", "sample"))
+            .body(text),
         Err(err) => {
             println!("{}", err);
             HttpResponse::Ok().body("There was an error with the completions endpoint call")

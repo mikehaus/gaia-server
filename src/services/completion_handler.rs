@@ -28,7 +28,7 @@ pub async fn generate_completion(client: Client) -> Result<String, ServiceError>
         test_max_tokens,
     );
 
-    dbg!(&payload);
+    // dbg!(&payload);
 
     let response = client
         .post(format!("{}{}", OPEN_AI_URL, COMPLETIONS_ENDPOINT))
@@ -37,7 +37,7 @@ pub async fn generate_completion(client: Client) -> Result<String, ServiceError>
         .await
         .unwrap();
 
-    dbg!(&response);
+    // dbg!(&response);
 
     match response.status() {
         reqwest::StatusCode::OK => {
