@@ -15,20 +15,20 @@ const DEFAULT_COMPLETION_MODEL: &str = "text-davinci-003";
 const DEFAULT_COMPLETION_MAX_TOKENS: u32 = 100;
 const DEFAULT_COMPLETION_TEMPERATURE: f32 = 8.0;
 
-pub async fn generate_completion(client: Client) -> Result<String, ServiceError> {
-    let test_prompt = "Generate dungeons and dragons PC druid names";
+pub async fn generate_completion(client: Client, req_body: String) -> Result<String, ServiceError> {
+    // let test_prompt = "Generate dungeons and dragons PC druid names";
     let test_model = "text-davinci-003";
     let test_max_tokens = Some(0.8);
     let test_temp = Some(100);
 
     let payload = CompletionsPayload::new(
-        &test_prompt,
+        &req_body,
         &Some(String::from(test_model)),
         test_temp,
         test_max_tokens,
     );
 
-    // dbg!(&payload);
+    dbg!(&payload);
 
     let response = client
         .post(format!("{}{}", OPEN_AI_URL, COMPLETIONS_ENDPOINT))
@@ -37,7 +37,7 @@ pub async fn generate_completion(client: Client) -> Result<String, ServiceError>
         .await
         .unwrap();
 
-    // dbg!(&response);
+    dbg!(&response);
 
     match response.status() {
         reqwest::StatusCode::OK => {

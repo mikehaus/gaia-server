@@ -27,9 +27,9 @@ pub async fn echo(req_body: String) -> impl Responder {
 pub async fn open_ai_completion(req_body: String) -> impl Responder {
     let client = client::client_builder();
 
-    dbg!(req_body);
+    // dbg!(&req_body);
 
-    let response = services::completion_handler::generate_completion(client).await;
+    let response = services::completion_handler::generate_completion(client, req_body).await;
     match response {
         Ok(text) => HttpResponse::Ok()
             .content_type(ContentType::plaintext())
