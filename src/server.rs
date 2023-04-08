@@ -24,10 +24,12 @@ pub async fn echo(req_body: String) -> impl Responder {
 
 // TODO: Implement completion endpoint once completions logic implemented
 #[post("/openai/completions")]
-pub async fn open_ai_completion() -> impl Responder {
+pub async fn open_ai_completion(req_body: String) -> impl Responder {
     let client = client::client_builder();
 
-    let response = services::completion_handler::generate_completion(client).await;
+    // dbg!(&req_body);
+
+    let response = services::completion_handler::generate_completion(client, req_body).await;
     match response {
         Ok(text) => HttpResponse::Ok()
             .content_type(ContentType::plaintext())
