@@ -37,7 +37,26 @@ pub async fn open_ai_completion(req_body: String) -> impl Responder {
             .body(text),
         Err(err) => {
             println!("{}", err);
-            HttpResponse::Ok().body("There was an error with the completions endpoint call")
+            HttpResponse::Ok()
+                .body("There was an error while generating a text completion from this endpoint")
+        }
+    }
+}
+
+#[post("/openai/images")]
+pub async fn open_ai_image_generation() -> impl Responder {
+    let client = client::client_builder();
+
+    let response = services::images_handler::generate_images(client).await;
+    match response {
+        Ok(text) => HttpResponse::Ok()
+            .content_type(ContentType::plaintext())
+            .insert_header(("X-Hdr", "sample"))
+            .body(text),
+        Err(err) => {
+            println!("{}", err);
+            HttpResponse::Ok()
+                .body("An error occurred while generating an image from this endpoint")
         }
     }
 }
