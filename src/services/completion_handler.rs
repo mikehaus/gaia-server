@@ -2,7 +2,6 @@
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
-use std::io::{stdout, Write};
 
 // Internal Deps
 
