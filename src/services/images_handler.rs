@@ -13,6 +13,9 @@ const DEFAULT_IMAGE_PROMPT: &str = "A Dungeons and Dragons dungeon master dresse
 const DEFAULT_GENERATED_IMAGE_COUNT: u32 = 2;
 const DEFAULT_IMAGE_RESOLUTION: u32 = 1;
 
+// MARK: S3 DEFAULTS
+const AWS_REGION: &str = "us-west-1";
+
 pub async fn generate_images(client: Client) -> Result<String, ServiceError> {
     let test_image_count: Option<u32> = Some(1);
     let test_image_resolution_opt: Option<u32> = Some(1);
@@ -34,6 +37,7 @@ pub async fn generate_images(client: Client) -> Result<String, ServiceError> {
 
     dbg!(&response);
 
+    // TODO: take blob and create presigned url with rusoto
     match response.status() {
         reqwest::StatusCode::OK => {
             let response_body = response.json::<ImagesResponse>().await.unwrap();
@@ -52,11 +56,13 @@ pub async fn generate_images(client: Client) -> Result<String, ServiceError> {
 
 // MARK: Req Model
 
+// TODO: Maybe put res_format at b64_json if can't upload to s3 without json
 #[derive(Debug, Serialize)]
 pub struct ImagesPayload {
     prompt: String,
     n: u32,
     size: String,
+    // response_format: String,
 }
 
 // TODO: Implement max value for matches (n is 1-10)
@@ -84,6 +90,7 @@ impl ImagesPayload {
             prompt: description.to_string(),
             n: n,
             size: size.to_string(),
+            // response_format: "b64_json".to_string(),
         }
     }
 }
@@ -94,6 +101,7 @@ pub struct ImagesResponse {
     data: Vec<ImageData>,
 }
 
+// TODO: Handle b64 Json data
 #[derive(Debug, Deserialize)]
 pub struct ImageData {
     url: String,
